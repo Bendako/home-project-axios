@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Foreign to Hebrew Date Converter</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Foreign to Hebrew Date Converter</h1>
+    <form id="dateForm">
+        <label for="foreignDate">Foreign Date:</label>
+        <input type="date" id="foreignDate" required>
+        <br>
+        <button type="submit">Convert</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('dateForm').addEventListener('submit', (event) => {
+                event.preventDefault();
+                const foreignDate = document.getElementById('foreignDate').value;
+
+                // Make API request
+                axios.get('https://www.hebcal.com/converter', {
+                    params: {
+                        cfg: 'json',
+                        gy: getYear(foreignDate),
+                        gm: getMonth(foreignDate),
+                        gd: getDay(foreignDate),
+                        g2h: 1
+                    }
+                })
+                .then(response => {
+                    const hebrewDate = response.data.hebrew;
+                    document.getElementById('result').textContent = `Hebrew Date: ${hebrewDate}`;
+                })
+                .catch(error => {
+                    document.getElementById('result').textContent = 'Error converting date.';
+                });
+            });
+
+            const getYear = (dateString) => {
+                const dateParts = dateString.split('-');
+                return dateParts[0];
+            };
+
+            const getMonth = (dateString) => {
+                const dateParts = dateString.split('-');
+                return dateParts[1];
+            };
+
+            const getDay = (dateString) => {
+                const dateParts = dateString.split('-');
+                return dateParts[2];
+            };
+        });
+    </script>
+</body>
+</html>
